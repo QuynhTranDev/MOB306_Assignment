@@ -1,20 +1,41 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import LoginScreen from './Screen/LoginScreen';
+import RegisterScreen from './Screen/RegisterScreen';
+import HomeScreen from './Screen/HomeScreen';
+import UserScreen from './Screen/UserScreen';
+import AddScreen from './Screen/AddScreen';
+
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+
+function MyTabs () {
+  return (
+    <Tab.Navigator>
+        <Tab.Screen options={{headerShown: false, tabBarLabel: 'Home', tabBarIcon: ({ color }) => ( <MaterialCommunityIcons name="home" color={color} size={26} />)}} name='Home' component={HomeScreen} />
+        <Tab.Screen options={{headerShown: false, tabBarLabel: 'Profile', tabBarIcon: ({ color }) => ( <MaterialCommunityIcons name="account" color={color} size={26} />)}} name='User' component={UserScreen} />
+    </Tab.Navigator>
+  )
+}
 
 export default function App() {
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+       <Stack.Navigator>
+        <Stack.Screen options={{headerShown: false}} name="Tab" component={MyTabs} />
+        <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+        <Stack.Screen options={{headerShown: false}} name="Register" component={RegisterScreen} />
+        <Stack.Screen options={{headerShown: false}} name="Add" component={AddScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+

@@ -1,13 +1,49 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '../config/firebase';
+import { ref, set } from 'firebase/database';
 
 const RegisterScreen = ({navigation}) => {
 
   
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState('');
+  const [checkPassword, setCheckPassword] = useState('');
+
+
+  const handleAddUser = async() => {
+    try {
+        if(email.length<=0){
+            alert('please enter email');
+            return;
+        }else if(password.length<=0){
+            alert('please enter password');
+            return;
+        }else if(checkPassword.length<=0){
+            alert('please enter check password');
+            return;
+        }else if(checkPassword!==password){
+            alert('password and check password are not the same');
+            return;
+        }else{
+            await createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential)=>{
+                const user = userCredential.user;
+                const userData = {
+                    type: 2,
+                    userName: 'Người dùng',
+                    image: '',
+                };
+                const userRef = ref(db, 'users/'+user.uid);
+                set(userRef,userData);
+            })
+        }
+    } catch (error) {
+        console.log('error: ', error);
+    }
+  }
 
   return (
     <SafeAreaView
@@ -36,8 +72,8 @@ const RegisterScreen = ({navigation}) => {
         />
         <TextInput
           placeholder="Re-Password"
-          value={newPassword}
-          onChangeText={text => setNewPassword(text)}
+          value={checkPassword}
+          onChangeText={text => setCheckPassword(text)}
           style={styles.input}
           secureTextEntry
         />
@@ -46,7 +82,7 @@ const RegisterScreen = ({navigation}) => {
 
       <View style={styles.buttonContainer}>
 
-        <TouchableOpacity onPress={'handleSignUp'} style={[styles.button, styles.button]}>
+        <TouchableOpacity onPress={handleAddUser} style={[styles.button, styles.button]}>
           <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
         <TouchableOpacity title="Go back" onPress={() => navigation.goBack()} style={[styles.button]}>

@@ -1,11 +1,33 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { auth } from '../config/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
 
 const LoginScreen = ({ navigation }) => {
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState(''); 
+
+  const handleLogin = async() => {
+    if(email.length<=0){
+        alert('please enter email');
+        return;
+    }else if(password.length<=0){
+        alert('please enter password');
+        return;
+    }else{
+        try {
+            await signInWithEmailAndPassword(auth ,email, password)
+            .then((userCredential)=>{
+              console.log('dang nhap thanh cong');
+            })
+        } catch (error) {
+            console.log('error: ',error);
+        }
+    }
+  }
 
   return (
     <SafeAreaView
@@ -36,7 +58,7 @@ const LoginScreen = ({ navigation }) => {
 
       <View style={styles.buttonContainer}>
 
-        <TouchableOpacity onPress={'handleLogin'} style={styles.button}>
+        <TouchableOpacity onPress={handleLogin} style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 
